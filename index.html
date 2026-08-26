@@ -68,7 +68,7 @@
             border: 1px solid rgba(255, 255, 255, 0.04);
             box-shadow: 0 40px 80px -20px #03060b, inset 0 1px 0 rgba(255,255,255,0.02);
             text-align: center;
-            max-width: 420px;
+            max-width: 460px;
             width: 90%;
             animation: floatUp 0.7s ease;
         }
@@ -76,24 +76,37 @@
             0% { opacity: 0; transform: translateY(30px) scale(0.96); }
             100% { opacity: 1; transform: translateY(0) scale(1); }
         }
+
+        /* Password page logo */
+        .password-logo {
+            margin-bottom: 0.5rem;
+        }
+        .password-logo img {
+            height: 80px;
+            width: auto;
+            display: block;
+            margin: 0 auto;
+            filter: drop-shadow(0 0 30px rgba(100, 160, 255, 0.15));
+        }
+
         .password-box .lock-icon {
-            font-size: 3.2rem;
+            font-size: 2.8rem;
             color: #7fa3d9;
-            margin-bottom: 0.8rem;
+            margin-top: 0.2rem;
             text-shadow: 0 0 40px rgba(70, 140, 255, 0.15);
         }
         .password-box h2 {
             font-weight: 600;
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             color: #dce9fc;
             letter-spacing: -0.02em;
-            margin-bottom: 0.4rem;
+            margin: 0.2rem 0 0.1rem;
         }
         .password-box p {
             color: #8da6c9;
             font-weight: 300;
-            font-size: 0.95rem;
-            margin-bottom: 1.8rem;
+            font-size: 0.9rem;
+            margin-bottom: 1.6rem;
         }
         .password-box input {
             width: 100%;
@@ -213,44 +226,36 @@
             min-height: 1rem;
         }
 
-        /* ---------- LOGO (heavy, glass) ---------- */
+        /* ---------- LOGO (image based) - ENLARGED ---------- */
         .logo-wrapper {
             display: flex;
             flex-wrap: wrap;
-            align-items: baseline;
+            align-items: center;
             justify-content: space-between;
             margin-bottom: 2.2rem;
             padding-bottom: 1.2rem;
             border-bottom: 1px solid rgba(255, 255, 255, 0.04);
             backdrop-filter: blur(2px);
+            gap: 1rem;
         }
 
         .logo-group {
             display: flex;
-            align-items: baseline;
-            flex-wrap: wrap;
-            gap: 0.2rem 0.6rem;
+            align-items: center;
+            gap: 1rem;
         }
 
-        .logo {
-            font-size: 4.2rem;
-            font-weight: 800;
-            letter-spacing: -0.04em;
-            background: linear-gradient(135deg, #f0f7ff, #b6cef0, #7fa3d9);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 0 40px rgba(100, 160, 255, 0.15);
-            line-height: 1;
+        .logo-img {
+            height: 80px;
+            width: auto;
+            display: block;
+            filter: drop-shadow(0 0 30px rgba(100, 160, 255, 0.12));
+            transition: filter 0.3s ease;
         }
-        .logo sup {
-            font-size: 2.4rem;
-            font-weight: 700;
-            -webkit-text-fill-color: #a0bde6;
-            background: none;
-            color: #a0bde6;
-            text-shadow: 0 0 20px rgba(90, 150, 255, 0.3);
+        .logo-img:hover {
+            filter: drop-shadow(0 0 45px rgba(100, 160, 255, 0.25));
         }
+
         .logo-sub {
             font-size: 1rem;
             font-weight: 300;
@@ -543,13 +548,15 @@
         /* ---------- RESPONSIVE ---------- */
         @media (max-width: 640px) {
             body { padding: 1.5rem 1rem; }
-            .logo { font-size: 3rem; }
-            .logo sup { font-size: 1.8rem; }
+            .logo-img { height: 55px; }
+            .password-logo img { height: 60px; }
             .section-card { padding: 1.5rem; }
             .qa-container { padding: 1.5rem; }
             .chapter-grid { grid-template-columns: 1fr; }
             .chapter-item .pdf-name { max-width: 130px; }
             .password-box { padding: 2rem 1.5rem; }
+            .logo-wrapper { flex-direction: column; align-items: flex-start; }
+            .tagline { border-left: none; padding-left: 0; margin-top: 0.3rem; }
         }
     </style>
 </head>
@@ -558,6 +565,10 @@
     <!-- PASSWORD OVERLAY -->
     <div class="password-overlay" id="passwordOverlay">
         <div class="password-box">
+            <!-- Logo on password page -->
+            <div class="password-logo">
+                <img src="MeetSol^nlgo.png" alt="MeetSolⁿ Logo" id="passwordLogo" />
+            </div>
             <div class="lock-icon"><i class="fas fa-lock"></i></div>
             <h2>MeetSolⁿ · English</h2>
             <p>Enter the access key to continue</p>
@@ -581,10 +592,10 @@
     <!-- MAIN CONTENT (hidden until unlock) -->
     <div id="mainContent" style="display: none;">
 
-        <!-- LOGO -->
+        <!-- LOGO (image based - ENLARGED) -->
         <div class="logo-wrapper">
             <div class="logo-group">
-                <span class="logo">MeetSol<sup>n</sup></span>
+                <img src="MeetSol^nlgo.png" alt="MeetSolⁿ Logo" class="logo-img" id="logoImage" />
                 <span class="logo-sub"><i class="fas fa-sparkles" style="margin-right:6px;color:#7fa3d9;"></i> english hub</span>
             </div>
             <div class="tagline">
@@ -631,6 +642,37 @@
 
     <script>
         (function() {
+            // ---------- Handle logo fallback for both instances ----------
+            function handleLogoError(imgElement) {
+                if (imgElement) {
+                    imgElement.style.display = 'none';
+                    const fallback = document.createElement('span');
+                    fallback.className = 'logo';
+                    fallback.innerHTML = 'MeetSol<sup>n</sup>';
+                    fallback.style.cssText = `
+                        font-size: 2.8rem;
+                        font-weight: 800;
+                        letter-spacing: -0.04em;
+                        background: linear-gradient(135deg, #f0f7ff, #b6cef0, #7fa3d9);
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        background-clip: text;
+                        line-height: 1;
+                    `;
+                    imgElement.parentNode.insertBefore(fallback, imgElement);
+                }
+            }
+
+            const mainLogo = document.getElementById('logoImage');
+            const passwordLogo = document.getElementById('passwordLogo');
+            
+            if (mainLogo) {
+                mainLogo.onerror = function() { handleLogoError(this); };
+            }
+            if (passwordLogo) {
+                passwordLogo.onerror = function() { handleLogoError(this); };
+            }
+
             // ---------- reCAPTCHA (fake) ----------
             const recaptchaContainer = document.getElementById('recaptchaContainer');
             const recaptchaCheckbox = document.getElementById('recaptchaCheckbox');
