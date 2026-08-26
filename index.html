@@ -147,6 +147,72 @@
             transform: scale(1.01);
         }
 
+        /* ---------- reCAPTCHA style ---------- */
+        .recaptcha-container {
+            margin-top: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 0.6rem 1.2rem;
+            border-radius: 60px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            cursor: pointer;
+            transition: 0.2s;
+            user-select: none;
+        }
+        .recaptcha-container:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(120, 180, 255, 0.15);
+        }
+        .recaptcha-container .checkbox {
+            width: 22px;
+            height: 22px;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+            flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .recaptcha-container .checkbox.checked {
+            background: #2a4a70;
+            border-color: #5f8ac9;
+        }
+        .recaptcha-container .checkbox i {
+            color: #8bb1e6;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: 0.2s;
+        }
+        .recaptcha-container .checkbox.checked i {
+            opacity: 1;
+        }
+        .recaptcha-container .recaptcha-text {
+            font-size: 0.8rem;
+            color: #a3bde0;
+            font-weight: 300;
+            letter-spacing: 0.3px;
+        }
+        .recaptcha-container .recaptcha-badge {
+            font-size: 0.6rem;
+            color: #6a84aa;
+            margin-left: auto;
+            background: rgba(255,255,255,0.02);
+            padding: 0.1rem 0.6rem;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.02);
+        }
+        .recaptcha-error {
+            color: #f5a0a0;
+            font-size: 0.7rem;
+            margin-top: 0.3rem;
+            min-height: 1rem;
+        }
+
         /* ---------- LOGO (heavy, glass) ---------- */
         .logo-wrapper {
             display: flex;
@@ -262,6 +328,21 @@
             font-weight: 300;
             font-size: 0.95rem;
             margin-bottom: 1.5rem;
+        }
+        .section-card .coming-soon-note {
+            margin-top: 2rem;
+            padding: 0.8rem 1.2rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 60px;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            color: #8da6c9;
+            font-size: 0.85rem;
+            text-align: center;
+            letter-spacing: 0.3px;
+        }
+        .section-card .coming-soon-note i {
+            color: #7fa3d9;
+            margin-right: 8px;
         }
 
         /* chapter list — grid layout for better readability */
@@ -481,6 +562,17 @@
             <h2>MeetSolⁿ · English</h2>
             <p>Enter the access key to continue</p>
             <input type="password" id="passwordInput" placeholder="••••••••" autofocus />
+            
+            <!-- reCAPTCHA style -->
+            <div class="recaptcha-container" id="recaptchaContainer">
+                <div class="checkbox" id="recaptchaCheckbox">
+                    <i class="fas fa-check"></i>
+                </div>
+                <span class="recaptcha-text">I'm not a robot</span>
+                <span class="recaptcha-badge">reCAPTCHA</span>
+            </div>
+            <div class="recaptcha-error" id="recaptchaError"></div>
+
             <div class="error-msg" id="errorMsg"></div>
             <button id="unlockBtn"><i class="fas fa-unlock-alt" style="margin-right: 8px;"></i> Unlock</button>
         </div>
@@ -509,6 +601,12 @@
                     10 chapters · click <strong>View</strong> to read questions &amp; answers
                 </div>
                 <div class="chapter-grid" id="englishChapterList"></div>
+                
+                <!-- Coming soon message -->
+                <div class="coming-soon-note">
+                    <i class="fas fa-clock"></i> 
+                    More chapter questions and answers will be added soon as Rumita ji uploads it.
+                </div>
             </div>
         </div>
 
@@ -533,7 +631,24 @@
 
     <script>
         (function() {
-            // ---------- PASSWORD LOCK (FIXED - using explicit event handlers) ----------
+            // ---------- reCAPTCHA (fake) ----------
+            const recaptchaContainer = document.getElementById('recaptchaContainer');
+            const recaptchaCheckbox = document.getElementById('recaptchaCheckbox');
+            const recaptchaError = document.getElementById('recaptchaError');
+            let recaptchaVerified = false;
+
+            recaptchaContainer.addEventListener('click', function(e) {
+                e.preventDefault();
+                recaptchaVerified = !recaptchaVerified;
+                if (recaptchaVerified) {
+                    recaptchaCheckbox.classList.add('checked');
+                    recaptchaError.textContent = '';
+                } else {
+                    recaptchaCheckbox.classList.remove('checked');
+                }
+            });
+
+            // ---------- PASSWORD LOCK ----------
             const passwordOverlay = document.getElementById('passwordOverlay');
             const passwordInput = document.getElementById('passwordInput');
             const unlockBtn = document.getElementById('unlockBtn');
@@ -541,31 +656,32 @@
             const mainContent = document.getElementById('mainContent');
             const CORRECT_PASSWORD = 'RUMITA';
 
-            // Clear any existing error on input
+            // Clear error on input
             passwordInput.addEventListener('input', function() {
                 errorMsg.textContent = '';
             });
 
             function attemptUnlock() {
                 const entered = passwordInput.value.trim();
-                console.log('Entered password:', entered);
-                console.log('Expected password:', CORRECT_PASSWORD);
-                console.log('Match:', entered === CORRECT_PASSWORD);
                 
+                // Check reCAPTCHA
+                if (!recaptchaVerified) {
+                    recaptchaError.textContent = '⚠️ Please verify that you are not a robot.';
+                    return;
+                } else {
+                    recaptchaError.textContent = '';
+                }
+
                 if (entered === CORRECT_PASSWORD) {
-                    // Success - hide overlay, show content
                     passwordOverlay.classList.add('hidden');
                     mainContent.style.display = 'block';
                     document.body.style.overflow = 'auto';
                     errorMsg.textContent = '';
                     console.log('✅ Unlocked successfully!');
                 } else {
-                    // Show error
                     errorMsg.textContent = '❌ Incorrect password. Try again.';
                     passwordInput.value = '';
                     passwordInput.focus();
-                    console.log('❌ Wrong password attempt');
-                    // Auto-clear error after 3 seconds
                     setTimeout(function() {
                         if (errorMsg.textContent === '❌ Incorrect password. Try again.') {
                             errorMsg.textContent = '';
@@ -574,13 +690,11 @@
                 }
             }
 
-            // BUTTON CLICK - using onclick directly to ensure it works
             unlockBtn.onclick = function(e) {
                 e.preventDefault();
                 attemptUnlock();
             };
 
-            // ENTER KEY on input
             passwordInput.onkeydown = function(e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
@@ -588,10 +702,7 @@
                 }
             };
 
-            // Keep focus on input
             passwordInput.focus();
-
-            // Prevent scrolling while locked
             document.body.style.overflow = 'hidden';
 
             // ---------- ENGLISH Q&A (10 entries) ----------
