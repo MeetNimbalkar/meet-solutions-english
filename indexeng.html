@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>MeetSolⁿ · English Hub</title>
+    <!-- Font Awesome 6 (free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <!-- Google Font: Outfit + Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0b0d11;
+            font-family: 'Outfit', 'Inter', sans-serif;
+            color: #eef3fc;
+            padding: 2.5rem 2rem 3rem;
+            max-width: 1100px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background-image: radial-gradient(circle at 10% 20%, rgba(40, 70, 120, 0.08) 0%, transparent 50%),
+                              radial-gradient(circle at 90% 80%, rgba(80, 140, 220, 0.06) 0%, transparent 50%);
+            opacity: 0;
+            animation: fadeInBody 0.8s ease forwards;
+        }
+
+        @keyframes fadeInBody {
+            to { opacity: 1; }
+        }
+
+        /* ---------- SCROLLBAR ---------- */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: #171e28; border-radius: 20px; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #5b7fb0, #33558a); border-radius: 20px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6f94c9; }
+
+        /* ---------- PASSWORD OVERLAY ---------- */
+        .password-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 8, 14, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 1.5rem;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+        .password-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .password-box {
+            background: rgba(18, 26, 38, 0.8);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 3rem 3.5rem;
+            border-radius: 48px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            box-shadow: 0 40px 80px -20px #03060b, inset 0 1px 0 rgba(255,255,255,0.02);
+            text-align: center;
+            max-width: 420px;
+            width: 90%;
+            animation: floatUp 0.7s ease;
+        }
+        @keyframes floatUp {
+            0% { opacity: 0; transform: translateY(30px) scale(0.96); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .password-box .lock-icon {
+            font-size: 3.2rem;
+            color: #7fa3d9;
+            margin-bottom: 0.8rem;
+            text-shadow: 0 0 40px rgba(70, 140, 255, 0.15);
+        }
+        .password-box h2 {
+            font-weight: 600;
+            font-size: 1.6rem;
+            color: #dce9fc;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.4rem;
+        }
+        .password-box p {
+            color: #8da6c9;
+            font-weight: 300;
+            font-size: 0.95rem;
+            margin-bottom: 1.8rem;
+        }
+        .password-box input {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            border-radius: 60px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            background: rgba(255, 255, 255, 0.02);
+            color: #eef3fc;
+            font-size: 1rem;
+            font-family: 'Outfit', sans-serif;
+            outline: none;
+            transition: 0.2s;
+            letter-spacing: 1px;
+        }
+        .password-box input:focus {
+            border-color: #6f8fc0;
+            box-shadow: 0 0 30px rgba(70, 140, 255, 0.05);
+        }
+        .password-box input::placeholder {
+            color: #4a6080;
+            letter-spacing: 0.5px;
+            font-weight: 300;
+        }
+        .password-box .error-msg {
+            color: #f5a0a0;
+            font-size: 0.85rem;
+            margin-top: 0.8rem;
+            min-height: 1.5rem;
+            font-weight: 300;
+        }
+        .password-box button {
+            margin-top: 1.2rem;
+            padding: 0.8rem 2.8rem;
+            border-radius: 60px;
+            border: none;
+            background: linear-gradient(145deg, #1f334f, #162a44);
+            color: #e5efff;
+            font-size: 1rem;
+            font-weight: 500;
+            font-family: 'Outfit', sans-serif;
+            cursor: pointer;
+            border: 1px solid rgba(100, 160, 255, 0.1);
+            transition: 0.2s;
+            width: 100%;
+            letter-spacing: 0.5px;
+        }
+        .password-box button:hover {
+            background: #28466a;
+            border-color: #5f8ac9;
+            box-shadow: 0 8px 28px rgba(30, 80, 180, 0.2);
+            transform: scale(1.01);
+        }
+
+        /* ---------- LOGO (heavy, glass) ---------- */
+        .logo-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            justify-content: space-between;
+            margin-bottom: 2.2rem;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(2px);
+        }
+
+        .logo-group {
+            display: flex;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 0.2rem 0.6rem;
+        }
+
+        .logo {
+            font-size: 4.2rem;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            background: linear-gradient(135deg, #f0f7ff, #b6cef0, #7fa3d9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 40px rgba(100, 160, 255, 0.15);
+            line-height: 1;
+        }
+        .logo sup {
+            font-size: 2.4rem;
+            font-weight: 700;
+            -webkit-text-fill-color: #a0bde6;
+            background: none;
+            color: #a0bde6;
+            text-shadow: 0 0 20px rgba(90, 150, 255, 0.3);
+        }
+        .logo-sub {
+            font-size: 1rem;
+            font-weight: 300;
+            color: #a3bde0;
+            letter-spacing: 0.5px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 0.2rem 1.2rem;
+            border-radius: 60px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(4px);
+        }
+        .tagline {
+            font-weight: 300;
+            color: #869fc2;
+            font-size: 0.95rem;
+            border-left: 2px solid #3f6190;
+            padding-left: 1.4rem;
+            letter-spacing: 0.3px;
+        }
+        .tagline i {
+            color: #7fa3d9;
+            margin-right: 8px;
+        }
+
+        /* ---------- ENGLISH SECTION (full width) ---------- */
+        .english-main {
+            margin: 2.5rem 0 2.5rem;
+        }
+
+        .section-card {
+            background: rgba(22, 30, 42, 0.55);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 40px;
+            padding: 2.5rem 2.5rem 2.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.02);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+        }
+        .section-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(70, 130, 220, 0.04), transparent 70%);
+            pointer-events: none;
+        }
+        .section-card:hover {
+            border-color: rgba(120, 180, 255, 0.15);
+            box-shadow: 0 35px 55px -16px #03050a, inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            background: rgba(26, 36, 50, 0.7);
+        }
+
+        .section-card h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.8rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: #dce9fc;
+        }
+        .section-card h2 i {
+            font-size: 1.8rem;
+            color: #7fa3d9;
+            width: 2.5rem;
+            text-shadow: 0 0 20px rgba(70, 140, 255, 0.2);
+        }
+        .section-card .sub-info {
+            color: #8da6c9;
+            font-weight: 300;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* chapter list — grid layout for better readability */
+        .chapter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 0.8rem;
+        }
+
+        .chapter-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 0.7rem 1.2rem 0.7rem 1.4rem;
+            border-radius: 60px;
+            font-size: 0.92rem;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            transition: all 0.25s ease;
+            cursor: default;
+            color: #d3e2f5;
+            backdrop-filter: blur(2px);
+        }
+        .chapter-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(120, 180, 255, 0.15);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+            transform: translateX(4px);
+        }
+        .chapter-item .pdf-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 400;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+        }
+        .chapter-item .pdf-name i {
+            color: #8bb1e6;
+            font-size: 0.9rem;
+            width: 1.2rem;
+        }
+        .chapter-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .chapter-actions a {
+            color: #c3d6f0;
+            font-size: 0.75rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 40px;
+            padding: 0.25rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 450;
+            transition: all 0.2s ease;
+            letter-spacing: 0.2px;
+            cursor: pointer;
+        }
+        .chapter-actions a:hover {
+            background: #2f4a70;
+            border-color: #6a8fc9;
+            color: white;
+            box-shadow: 0 4px 14px rgba(40, 100, 220, 0.25);
+            transform: scale(1.04);
+        }
+        .chapter-actions a i { font-size: 0.7rem; }
+
+        /* ---------- FOOTER ---------- */
+        .footer-note {
+            margin-top: 4rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+            padding-top: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            color: #a1b8da;
+            font-size: 0.95rem;
+        }
+        .footer-note .dev i { margin-right: 8px; color: #7f9fc9; }
+        .footer-note .rumita {
+            font-weight: 600;
+            font-size: 1rem;
+            background: rgba(200, 50, 50, 0.08);
+            padding: 0.3rem 1.6rem;
+            border-radius: 60px;
+            color: #f5baba;
+            border: 1px solid rgba(200, 80, 80, 0.15);
+            backdrop-filter: blur(4px);
+            letter-spacing: 0.2px;
+            animation: pulseGlow 3s infinite;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 10px rgba(200, 50, 50, 0.05); }
+            50% { box-shadow: 0 0 25px rgba(200, 50, 50, 0.12); }
+        }
+
+        /* ---------- Q&A OVERLAY ---------- */
+        .qa-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 8, 14, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+            padding: 1.2rem;
+            animation: overlayFade 0.3s ease;
+        }
+        @keyframes overlayFade {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .qa-overlay.active { display: flex; }
+
+        .qa-container {
+            background: rgba(18, 26, 38, 0.9);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            box-shadow: 0 40px 80px -20px #03060b;
+            overflow: hidden;
+            animation: slideUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2.2rem 2.5rem;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .qa-container::-webkit-scrollbar { width: 4px; }
+        .qa-container::-webkit-scrollbar-thumb { background: #3d5068; border-radius: 12px; }
+
+        .qa-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            padding-bottom: 1rem;
+            margin-bottom: 1.8rem;
+        }
+        .qa-header h3 {
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: #d6e2f5;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .qa-header h3 i { color: #8bb1e6; }
+
+        .qa-close {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #9aafca;
+            padding: 0 0.4rem;
+            transition: all 0.25s ease;
+        }
+        .qa-close:hover { color: #f0f8ff; transform: rotate(90deg) scale(1.1); }
+
+        .qa-question {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 1.2rem 1.6rem;
+            border-radius: 24px;
+            border-left: 5px solid #6f8fc0;
+            margin-bottom: 1.8rem;
+            font-size: 1rem;
+            color: #e0e9f5;
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+        .qa-answer {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 1.5rem 1.8rem;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            color: #d3def0;
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }
+        .qa-answer strong { color: #b4cdf5; }
+
+        /* ---------- RESPONSIVE ---------- */
+        @media (max-width: 640px) {
+            body { padding: 1.5rem 1rem; }
+            .logo { font-size: 3rem; }
+            .logo sup { font-size: 1.8rem; }
+            .section-card { padding: 1.5rem; }
+            .qa-container { padding: 1.5rem; }
+            .chapter-grid { grid-template-columns: 1fr; }
+            .chapter-item .pdf-name { max-width: 130px; }
+            .password-box { padding: 2rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PASSWORD OVERLAY -->
+    <div class="password-overlay" id="passwordOverlay">
+        <div class="password-box">
+            <div class="lock-icon"><i class="fas fa-lock"></i></div>
+            <h2>MeetSolⁿ · English</h2>
+            <p>Enter the access key to continue</p>
+            <input type="password" id="passwordInput" placeholder="••••••••" autofocus />
+            <div class="error-msg" id="errorMsg"></div>
+            <button id="unlockBtn"><i class="fas fa-unlock-alt" style="margin-right: 8px;"></i> Unlock</button>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT (hidden until unlock) -->
+    <div id="mainContent" style="display: none;">
+
+        <!-- LOGO -->
+        <div class="logo-wrapper">
+            <div class="logo-group">
+                <span class="logo">MeetSol<sup>n</sup></span>
+                <span class="logo-sub"><i class="fas fa-sparkles" style="margin-right:6px;color:#7fa3d9;"></i> english hub</span>
+            </div>
+            <div class="tagline">
+                <i class="fas fa-chevron-circle-right"></i> literature · analysis · answers
+            </div>
+        </div>
+
+        <!-- ENGLISH MAIN SECTION -->
+        <div class="english-main">
+            <div class="section-card">
+                <h2><i class="fas fa-book-open"></i> English Q&A</h2>
+                <div class="sub-info">
+                    <i class="fas fa-question-circle" style="color:#7fa3d9;margin-right:6px;"></i>
+                    10 chapters · click <strong>View</strong> to read questions &amp; answers
+                </div>
+                <div class="chapter-grid" id="englishChapterList"></div>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer-note">
+            <div class="dev"><i class="fas fa-code"></i> Proudly developed by Meet Nimbalkar</div>
+            <div class="rumita"><i class="fas fa-exclamation-triangle" style="margin-right:6px;"></i> Rumita must not know this !!</div>
+        </div>
+
+    </div>
+
+    <!-- Q&A OVERLAY -->
+    <div class="qa-overlay" id="qaOverlay">
+        <div class="qa-container">
+            <div class="qa-header">
+                <h3><i class="fas fa-pen-fancy"></i> <span id="qaChapterTitle">Chapter</span></h3>
+                <button class="qa-close" id="qaCloseBtn">&times;</button>
+            </div>
+            <div id="qaContent"></div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ---------- PASSWORD LOCK (FIXED - using explicit event handlers) ----------
+            const passwordOverlay = document.getElementById('passwordOverlay');
+            const passwordInput = document.getElementById('passwordInput');
+            const unlockBtn = document.getElementById('unlockBtn');
+            const errorMsg = document.getElementById('errorMsg');
+            const mainContent = document.getElementById('mainContent');
+            const CORRECT_PASSWORD = 'RUMITA';
+
+            // Clear any existing error on input
+            passwordInput.addEventListener('input', function() {
+                errorMsg.textContent = '';
+            });
+
+            function attemptUnlock() {
+                const entered = passwordInput.value.trim();
+                console.log('Entered password:', entered);
+                console.log('Expected password:', CORRECT_PASSWORD);
+                console.log('Match:', entered === CORRECT_PASSWORD);
+                
+                if (entered === CORRECT_PASSWORD) {
+                    // Success - hide overlay, show content
+                    passwordOverlay.classList.add('hidden');
+                    mainContent.style.display = 'block';
+                    document.body.style.overflow = 'auto';
+                    errorMsg.textContent = '';
+                    console.log('✅ Unlocked successfully!');
+                } else {
+                    // Show error
+                    errorMsg.textContent = '❌ Incorrect password. Try again.';
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                    console.log('❌ Wrong password attempt');
+                    // Auto-clear error after 3 seconds
+                    setTimeout(function() {
+                        if (errorMsg.textContent === '❌ Incorrect password. Try again.') {
+                            errorMsg.textContent = '';
+                        }
+                    }, 3000);
+                }
+            }
+
+            // BUTTON CLICK - using onclick directly to ensure it works
+            unlockBtn.onclick = function(e) {
+                e.preventDefault();
+                attemptUnlock();
+            };
+
+            // ENTER KEY on input
+            passwordInput.onkeydown = function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    attemptUnlock();
+                }
+            };
+
+            // Keep focus on input
+            passwordInput.focus();
+
+            // Prevent scrolling while locked
+            document.body.style.overflow = 'hidden';
+
+            // ---------- ENGLISH Q&A (10 entries) ----------
+            const englishQA = [
+                {
+                    chapter: 'Portrait of a Lady (Q1)',
+                    q: `Do you think grandmother was happier in the village than in the city? (40-50 words)\n\nSuccess Criteria:\nOpinion-based descriptive answer\nSuggested Tense: Simple Past Tense (because the story describes past events)\nClearly states an opinion (Yes/No) about whether the grandmother was happier in the village or city.\nGives at least one clear reason based on the text/understanding.\nMentions both village and city for comparison.\nSummarise briefly where she felt more content and at peace.`,
+                    a: `Yes, the grandmother was happier in the village than in the city. In the village, she was surrounded by her natural routine—feeding sparrows, visiting the temple, and walking to school with the narrator. She felt a sense of purpose and connection to life. In contrast, the city isolated her; she could not help with the narrator's studies and felt disconnected from the modern world. She missed the simplicity and freedom of village life, where she was more active and involved. Overall, she was more content and at peace in the village because it aligned with her traditional values and daily rituals.`
+                },
+                {
+                    chapter: 'Portrait of a Lady (Q2)',
+                    q: `"Justify the appropriateness of the title 'The Portrait of a Lady' in relation to the grandmother's character and life." (120 - 150 words)\n\nSuccess Criteria:\nBegin by explaining the significance of the title "The Portrait of a Lady" and connect it with the grandmother's character.\nState how it reflects the grandmother's personality and life values.\nShow understanding of her character traits (kindness, faith, discipline, traditional values, affection).\nConnect her life journey (from village life to modern changes and death).\nInclude at least 2–3 supporting references from the text (e.g., feeding birds, prayer, concern for narrator, etc.).\nConclude how it is appropriate and how it reflects the complete "portrait" of the grandmother's life and personality\nUse:\nSimple Present Tense for analysis ("The title reflects…", "She represents…")\nSimple Past Tense for events from the story ("She fed the sparrows", "She stopped talking…")`,
+                    a: `The title "The Portrait of a Lady" is highly appropriate as it perfectly captures the essence of the grandmother's life and character. It reflects her core traits: kindness, faith, discipline, and traditional values. She represented the ideal of a loving, devoted grandmother who found joy in simple acts of care. She fed sparrows daily, prayed without fail, and was deeply concerned for her grandson's well-being. Her life journey from the village, where she was active and happy, to the city, where she felt isolated, shows her struggle to remain true to herself amidst change. Even in her final moments, she was surrounded by the birds she loved, symbolising her peaceful spirit. The title frames her entire life as a complete portrait—a timeless image of a gentle, strong, and deeply spiritual woman. Thus, it is a fitting and meaningful title.`
+                },
+                {
+                    chapter: 'A Photograph',
+                    q: `A Photograph - Happy moments are short-lived but provide a lifetime memory. They provide a cushion to bear the difficulties which the future has in store for you. Comment in the light of the poem and Photograph by Shirley Toulson. Write in about 120-150 words using the keywords/expressions.\n\nKeywords/Expressions: nostalgia, transience of life, power of memories, passage of time, sense of loss, comfort and consolation`,
+                    a: `The poem "A Photograph" by Shirley Toulson beautifully illustrates that happy moments, though fleeting, leave an indelible mark on our lives. The photograph of the poet's mother, laughing with her cousins at the beach, is frozen in time—a moment of pure joy. However, the poet feels a deep sense of loss as she reflects on the transience of life and the passage of time. Her mother is no longer there, and the photograph becomes a source of nostalgia and comfort. The power of memories provides a cushion to bear the difficulties of the future; the poet finds consolation in the image, which reminds her of her mother's happiness. Thus, even brief moments of joy can offer enduring strength and a sense of connection, helping us cope with life's inevitable sorrows.`
+                },
+                {
+                    chapter: 'We are not afraid to die...',
+                    q: `"The hurdles of life can be challenged if we have confidence to make optimum use of our potential." Elaborate this statement with reference to the text read.\n\nSuccess Criteria:\nExplains how the family's confidence helped them face the challenges of the voyage.\nSupports the answer with relevant incidents from the story.\nHighlights the role of courage, determination, teamwork, and resilience in overcoming adversity.\nDraws a meaningful conclusion linking the story to the given statement.\nKeywords/Expressions to include: Confidence, courage, determination, resilience, teamwork, unity, perseverance, optimism, endurance, hope, survival, adversity, family support, unwavering spirit.`,
+                    a: `The story "We are Not Afraid to Die… if We Can All Be Together" perfectly illustrates that challenges can be overcome with confidence and the optimal use of one's potential. The narrator and his family faced a life-threatening storm in the vast ocean. Their confidence in their abilities and teamwork was crucial to their survival. The narrator's courage and determination to repair the boat, along with his wife's unwavering support, and the children's resilience, kept their hope alive. The entire family displayed unity and perseverance, tackling each problem with optimism. They endured immense adversity but never lost their unwavering spirit. Their family support and collective effort were the bedrock of their survival. This incident proves that when we face hurdles with confidence, resilience, and teamwork, we can overcome the most daunting challenges.`
+                },
+                {
+                    chapter: 'Summer of a Beautiful White Horse',
+                    q: `As Aram, write a diary entry expressing your mixed emotions after the horse ride with Mourad. Discuss the excitement of riding the horse, your feelings about Mourad's unusual action, and your reaction when you discovered the truth about the horse's owner.\n\nFollow the correct diary format:\nDate and Day, Time, Salutation: Dear Diary\nUse "I" and describe events that already happened. Write the diary entry from a first-person point of view.\nDescribe the excitement and joy of riding the horse.\nExpress mixed emotions such as happiness, confusion, guilt, admiration, or concern.\nExplain Aram's feelings about Mourad's unusual action of taking the horse.\nRefer to the events and characters from The Summer of the Beautiful White Horse.\nInclude personal reflections and thoughts, not just a retelling of events.\nUse emotive and descriptive language to convey feelings effectively.`,
+                    a: `July 15, 2025\n9:30 PM\nDear Diary,\n\nI am still trembling with excitement and confusion. Today was extraordinary—I rode the most beautiful white horse with Mourad! The feeling of the wind in my hair and the power beneath me was pure magic. I felt like a prince. But my joy is mixed with a strange guilt. I knew the horse did not belong to us; Mourad had taken it from John Byro. I admired Mourad's courage and his way with the horse, but I also felt a deep unease. When we later learned that John Byro had seen us and was heartbroken, I felt a pang of shame. Yet, when Mourad returned the horse, I was relieved and proud of him. It was a day of wonder and a lesson in honesty. I am still trying to understand the rightness of it all.`
+                },
+                {
+                    chapter: 'The Laburnum Top',
+                    q: `How does Ted Hughes use the contrast between silence and activity in "The Laburnum Top" to highlight the interconnectedness of nature and the nurturing role of the mother goldfinch? Support your answer with evidence from the poem.(120-150 words)\n\nSuccess Criteria:\nExplains the contrast between the silent tree and its sudden liveliness.\nAnalyses the symbolic role of the goldfinch as a life-giving and nurturing force.\nDiscusses the theme of interconnectedness and the cycle of life in nature.\nRefers to imagery, symbolism, and poetic devices (e.g., simile, metaphor, personification) with relevant textual references.\nKey Words to Include: Silence and activity, interconnectedness, cycle of life, vitality, transformation, motherhood, nurturing instinct, transience, renewal.`,
+                    a: `Ted Hughes masterfully uses the contrast between silence and activity in "The Laburnum Top" to reveal the profound interconnectedness of nature and the nurturing role of the mother goldfinch. The poem begins with a silent, still tree: "The Laburnum top is silent, quite still." This stillness suggests lifelessness and dormancy. However, the arrival of the goldfinch transforms the tree into a vibrant hub of activity: "Then sleek as a lizard, and alert, and abrupt, she enters the thickness." The sudden activity, with its "chitterings" and "tremor of wings," brings the tree to life. The goldfinch is a symbol of motherhood; she brings life to her chicks and, in turn, enlivens the entire tree. This cycle shows that her nurturing instinct is central to the ecosystem. The brief, transient activity followed by silence underscores the cycle of life and renewal, highlighting how all elements of nature are interconnected through life-giving actions.`
+                },
+                {
+                    chapter: 'The Address',
+                    q: `Imagine you are Mrs Dorling. After many years, you realise the emotional pain your actions caused the narrator. Write a letter to the narrator expressing your feelings. Reflect on whether your actions were justified by the circumstances of the war or influenced by personal greed. Also explain what you have learnt about trust, humanity, and the true value of relationships.\n\nSuccess Criteria:\nFollow the format of informal letters.\nWrite from Mrs Dorling's perspective throughout.\nAnalyse the reasons behind her actions during the war instead of merely narrating events.\nReflect on the themes of war, morality, trust, greed, guilt, and redemption.\nExpress sincere remorse or provide a convincing justification supported by incidents from the story.\nConclude with a thoughtful reflection on the importance of human relationships over material possessions.\nPast Tense – to describe events that happened during the war and Mrs Dorling's actions.\nPresent Tense – to express present feelings, realizations, and opinions.\nKey Words to be Included: Remorse, guilt, survival, greed, trust, humanity, relationships, forgiveness, material possessions, memories, redemption, reflection, acceptance.`,
+                    a: `Dear [Narrator's Name],\n\nI am writing this letter with a heavy heart, filled with remorse and guilt. For years, I have tried to forget the past, but the memory of your mother and the things I took from your house haunts me. During the war, I was driven by a desperate need for survival. I told myself I was keeping your mother's possessions safe, but I also had to admit a dark secret: there was a part of me that was greedy. I coveted the beautiful things, the silver, the antique furniture. I took them, convincing myself it was a practical act of preservation. But I broke your trust and shattered the memory of your mother. I have now come to understand that material possessions are worthless compared to the value of human relationships. I cannot return the years of pain I caused you, nor the memories I stole. I can only ask for your forgiveness and hope that you find peace. The true value of a person lies not in what they own, but in the love and trust they share.\n\nYours sincerely,\nMrs Dorling`
+                },
+                {
+                    chapter: 'The Voice of the Rain',
+                    q: `Why does the rain describe itself as the "Poem of Earth"? Discuss how this metaphor highlights the creative and life-giving power of nature.\n\nSuccess Criteria:\nExplain why the rain is called the "Poem of Earth". (nature's creative expression)\nRain as a life-giving and nurturing force. (growth, fertility, sustenance)\nThe continuous water cycle and its symbolism of renewal and continuity.\nAnalyze the metaphor by linking it to selfless service, interconnectedness, and harmony of nature.\nPresent a well-organized answer with relevant textual references.\nKeywords: Poem of Earth, metaphor, personification, creativity, life-giving, fertility, water cycle, renewal, selfless service, interconnectedness, harmony of nature.`,
+                    a: `The rain describes itself as the "Poem of Earth" because it is nature's creative expression, a life-giving force that transforms the planet. This metaphor highlights the rain's nurturing power, as it provides fertility and sustenance to all living things. The rain, through its continuous cycle of evaporation and precipitation, symbolises renewal and continuity. It rises from the earth and sea as "vapour" and returns as a "life-giving" shower, completing a cycle of selfless service. The rain's personification as a poem suggests that nature's processes are artistic and purposeful. This metaphor beautifully captures the interconnectedness and harmony of nature, where each element plays a vital role in the cycle of life.`
+                },
+                {
+                    chapter: 'Discovering Tut',
+                    q: `The guard joked about the 'Curse of pharaoh' do you think such curses really exists? what could have led to this belief among the people?\n\nSuccess Criteria:\nClearly state your opinion.\nSupport their opinion with relevant reasons and textual references.`,
+                    a: `I do not believe that the 'Curse of the Pharaoh' truly exists. It seems more like a myth that has been popularised by sensational media and coincidental events. The belief likely stems from the mysterious deaths of some people associated with the discovery of Tutankhamun's tomb, like Lord Carnarvon. However, such incidents can be explained by natural causes or sheer coincidence. The media and popular culture amplified the idea of a curse, feeding into the public's fascination with the supernatural. The ancient Egyptians did have beliefs about the afterlife and the protection of tombs, but the concept of a modern "curse" is largely a fabrication.`
+                }
+            ];
+
+            // Build English list
+            const englishList = document.getElementById('englishChapterList');
+            if (englishList) {
+                englishQA.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'chapter-item';
+                    const nameSpan = document.createElement('span');
+                    nameSpan.className = 'pdf-name';
+                    nameSpan.innerHTML = `<i class="fas fa-book" style="color:#8bb1e6;"></i> ${item.chapter}`;
+                    div.appendChild(nameSpan);
+                    const actions = document.createElement('div');
+                    actions.className = 'chapter-actions';
+                    const viewBtn = document.createElement('a');
+                    viewBtn.innerHTML = '<i class="fas fa-eye"></i> View';
+                    viewBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        openQA(item.chapter, item.q, item.a);
+                    });
+                    actions.appendChild(viewBtn);
+                    div.appendChild(actions);
+                    englishList.appendChild(div);
+                });
+            }
+
+            // Q&A overlay
+            const qaOverlay = document.getElementById('qaOverlay');
+            const qaCloseBtn = document.getElementById('qaCloseBtn');
+            const qaChapterTitle = document.getElementById('qaChapterTitle');
+            const qaContent = document.getElementById('qaContent');
+
+            function openQA(chapter, question, answer) {
+                qaChapterTitle.textContent = chapter;
+                qaContent.innerHTML = `
+                    <div class="qa-question"><strong><i class="fas fa-question-circle" style="color:#8bb1e6;margin-right:10px;"></i>Question:</strong><br><br>${question}</div>
+                    <div class="qa-answer"><strong><i class="fas fa-check-circle" style="color:#6f8fc0;margin-right:10px;"></i>Answer:</strong><br><br>${answer}</div>
+                `;
+                qaOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeQA() {
+                qaOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            if (qaCloseBtn) qaCloseBtn.addEventListener('click', closeQA);
+            if (qaOverlay) qaOverlay.addEventListener('click', (e) => { if (e.target === qaOverlay) closeQA(); });
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && qaOverlay.classList.contains('active')) closeQA(); });
+
+            console.log('✅ MeetSolⁿ English Hub loaded successfully!');
+            console.log('🔑 Password is: RUMITA');
+        })();
+    </script>
+</body>
+</html>
